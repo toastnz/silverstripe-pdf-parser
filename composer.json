@@ -1,9 +1,9 @@
 {
     "name": "andrewandante/silverstripe-pdf-parser",
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "description": "Adds PDFParser package to extract contents of PDF files for search etc.",
     "require": {
-        "silverstripe/textextraction": "^2.0.0",
+        "silverstripe/textextraction": "^3.0.0",
         "smalot/pdfparser": "^1.0.0"
     },
     "license": "MIT",
@@ -12,5 +12,10 @@
             "name": "Andrew Aitken-Fincham",
             "email": "andrew.aitkenfincham@silverstripe.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "AndrewAndante\\SilverStripePDFParser\\": "silverstripe-pdf-parser/src"
+        }
+    }
 }

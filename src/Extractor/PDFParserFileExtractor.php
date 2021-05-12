@@ -1,6 +1,13 @@
 <?php
 
+namespace AndrewAndante\SilverStripePDFParser\Extractor;
+
+use Psr\Log\LoggerInterface;
+use SilverStripe\Assets\File;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\TextExtraction\Extractor\FileTextExtractor;
 use Smalot\PdfParser\Parser;
+use Throwable;
 
 class PDFParserTextExtractor extends FileTextExtractor
 {
@@ -40,19 +47,19 @@ class PDFParserTextExtractor extends FileTextExtractor
     /**
      * @inheritDoc
      */
-    public function getContent($path): string
+    public function getContent($file): string
     {
         $pdfParser = new Parser();
         try {
+            $path = $file instanceof File ? self::getPathFromFile($file) : $file;
             return $pdfParser->parseFile($path)->getText();
-        } catch (Exception $e) {
-            SS_Log::log(
+        } catch (Throwable $e) {
+            Injector::inst()->get(LoggerInterface::class)->info(
                 sprintf(
-                    '[PDFParserFileExtractor] Error extracting text from "%s" (message: %s)',
-                    $path,
+                    '[PDFParserTextExtractor] Error extracting text from "%s" (message: %s)',
+                    $path ?? 'unknown file',
                     $e->getMessage()
-                ),
-                SS_Log::NOTICE
+                )
             );
         }
 
