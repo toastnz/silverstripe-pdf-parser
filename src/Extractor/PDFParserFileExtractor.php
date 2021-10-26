@@ -4,6 +4,7 @@ namespace AndrewAndante\SilverStripePDFParser\Extractor;
 
 use Psr\Log\LoggerInterface;
 use SilverStripe\Assets\File;
+use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\TextExtraction\Extractor\FileTextExtractor;
 use Smalot\PdfParser\Parser;
@@ -11,6 +12,7 @@ use Throwable;
 
 class PDFParserTextExtractor extends FileTextExtractor
 {
+    use Extensible;
 
     /**
      * @inheritDoc
@@ -52,7 +54,9 @@ class PDFParserTextExtractor extends FileTextExtractor
         $pdfParser = new Parser();
         try {
             $path = $file instanceof File ? self::getPathFromFile($file) : $file;
-            return $pdfParser->parseFile($path)->getText();
+            $text = $pdfParser->parseFile($path)->getText();
+            $this->extend('updateParsedText', $text);
+            return $text;
         } catch (Throwable $e) {
             Injector::inst()->get(LoggerInterface::class)->info(
                 sprintf(
